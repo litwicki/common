@@ -12,10 +12,10 @@
         "php": ">=5.3"
     },
     "suggest": {
-        "symfony/yaml": "To use yaml based configuration.",
+        "symfony/yaml": "To use yaml based configuration."
     },
     "autoload": {
-        "psr-0": { "litwicki": "src/" }
+        "psr-0": { "Litwicki": "src/" }
     },
     "config": {
         "bin-dir": "bin"
