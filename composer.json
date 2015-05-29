@@ -1,5 +1,7 @@
 {
     "name": "litwicki/common",
+    "type": "library",
+    "keywords": ["library", "component", "helper"],
     "description": "Helper functions and utilities.",
     "license": "MIT",
     "authors": [
@@ -15,9 +17,6 @@
         "symfony/yaml": "To use yaml based configuration."
     },
     "autoload": {
-        "psr-0": { "Litwicki": "src/" }
-    },
-    "config": {
-        "bin-dir": "bin"
+        "psr-0": { "Litwicki\\": "src/" }
     }
 }
