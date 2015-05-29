@@ -17,6 +17,8 @@
         "symfony/yaml": "To use yaml based configuration."
     },
     "autoload": {
-        "psr-0": { "Litwicki\\": "src/" }
+        "psr-4": {
+            "Litwicki\\Common\\": "src"
+        }
     }
 }
