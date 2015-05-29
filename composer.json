@@ -4,6 +4,7 @@
     "keywords": ["library", "component", "helper"],
     "description": "Helper functions and utilities.",
     "license": "MIT",
+    "homepage": "http://jakelitwicki.com",
     "authors": [
         {
             "name": "Jake Litwicki",
@@ -17,8 +18,7 @@
         "symfony/yaml": "To use yaml based configuration."
     },
     "autoload": {
-        "psr-0": {
-            "Litwicki": "src/"
-        }
-    }
+        "psr-0": { "Litwicki\\Common": "lib" }
+    },
+    "target-dir": "Litwicki/Common"
 }
