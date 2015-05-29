@@ -6,10 +6,10 @@
         {
             "name": "Jake Litwicki",
             "email": "jake.litwicki@gmail.com"
-        },
+        }
     ],
     "require": {
-        "php": ">=5.3",
+        "php": ">=5.3"
     },
     "suggest": {
         "symfony/yaml": "To use yaml based configuration.",
