@@ -18,7 +18,7 @@
         "symfony/yaml": "To use yaml based configuration."
     },
     "autoload": {
-        "psr-0": { "Litwicki\\Common": "lib" }
+        "psr-0": { "Litwicki": "lib" }
     },
-    "target-dir": "Litwicki/Common"
+    "target-dir": "lib"
 }
