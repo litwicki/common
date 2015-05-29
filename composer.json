@@ -1,0 +1,12 @@
+{
+    "name": "litwicki/common",
+    "description": "A set of common helper functions.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jake Litwicki",
+            "email": "jake.litwicki@gmail.com"
+        }
+    ],
+    "require": {}
+}
