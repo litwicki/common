@@ -19,6 +19,6 @@
     },
     "autoload": {
         "psr-0": { "Litwicki\\Common\\": "" }
-    }
+    },
     "target-dir" : "Litwicki/Common/lib"
 }
