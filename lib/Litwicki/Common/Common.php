@@ -403,4 +403,269 @@ class Common
         );
     }
 
+    /**
+     * Convert BR tags to nl
+     *
+     * @param string The string to convert
+     *
+     * @return string The converted string
+     */
+    public static function br2nl($string)
+    {
+        return preg_replace('#<br\s*?/?>\\n#i', "\n", $string);
+    }
+
+    /**
+     * Takes a word separated by underscores and capitalizes into camelcase.
+     *
+     * @param $string
+     * @param bool $first_char_caps
+     * @return mixed
+     */
+    public static function underscoreToCamelCase($string, $first_char_caps = false)
+    {
+        if( $first_char_caps == true )
+        {
+            $string[0] = strtoupper($string[0]);
+        }
+        $func = create_function('$c', 'return strtoupper($c[1]);');
+        return preg_replace_callback('/_([a-z])/', $func, $string);
+    }
+
+    /**
+     * Parses a user agent string into its important parts
+     *
+     * @author Jesse G. Donat <donatj@gmail.com>
+     * @link   https://github.com/donatj/PhpUserAgent
+     * @link   http://donatstudios.com/PHP-Parser-HTTP_USER_AGENT
+     *
+     * @param string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
+     *
+     * @return array an array with browser, version and platform keys
+     */
+    public static function parseUserAgent($u_agent = NULL)
+    {
+        if (is_null($u_agent)) {
+            if (isset($_SERVER['HTTP_USER_AGENT'])) {
+                $u_agent = $_SERVER['HTTP_USER_AGENT'];
+            }
+            else {
+                throw new \Exception(sprintf('%s requires a user agent', __METHOD__));
+            }
+        }
+
+        $platform = NULL;
+        $browser = NULL;
+        $version = NULL;
+
+        $empty = array(
+            'platform' => $platform,
+            'browser'  => $browser,
+            'version'  => $version
+        );
+
+        if (!$u_agent) {
+            return $empty;
+        }
+
+        if (preg_match('/\((.*?)\)/im', $u_agent, $parent_matches)) {
+
+            preg_match_all('/(?P<platform>BB\d+;|Android|CrOS|iPhone|iPad|Linux|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|Nintendo\ (WiiU?|3DS)|Xbox(\ One)?)
+                    (?:\ [^;]*)?
+                    (?:;|$)/imx', $parent_matches[1], $result, PREG_PATTERN_ORDER);
+
+            $priority = array(
+                'Android',
+                'Xbox One',
+                'Xbox'
+            );
+            $result['platform'] = array_unique($result['platform']);
+            if (count($result['platform']) > 1) {
+                if ($keys = array_intersect($priority, $result['platform'])) {
+                    $platform = reset($keys);
+                }
+                else {
+                    $platform = $result['platform'][0];
+                }
+            }
+            elseif (isset($result['platform'][0])) {
+                $platform = $result['platform'][0];
+            }
+        }
+
+        if ($platform == 'linux-gnu') {
+            $platform = 'Linux';
+        }
+        elseif ($platform == 'CrOS') {
+            $platform = 'Chrome OS';
+        }
+
+        preg_match_all('%(?P<browser>Camino|Kindle(\ Fire\ Build)?|Firefox|Iceweasel|Safari|MSIE|Trident/.*rv|AppleWebKit|Chrome|IEMobile|Opera|OPR|Silk|Lynx|Midori|Version|Wget|curl|NintendoBrowser|PLAYSTATION\ (\d|Vita)+)
+                (?:\)?;?)
+                (?:(?:[:/ ])(?P<version>[0-9A-Z.]+)|/(?:[A-Z]*))%ix', $u_agent, $result, PREG_PATTERN_ORDER);
+
+        // If nothing matched, return null (to avoid undefined index errors)
+        if (!isset($result['browser'][0]) || !isset($result['version'][0])) {
+            return $empty;
+        }
+
+        $browser = $result['browser'][0];
+        $version = $result['version'][0];
+
+        $find = function ($search, &$key) use ($result) {
+            $xkey = array_search(strtolower($search), array_map('strtolower', $result['browser']));
+            if ($xkey !== false) {
+                $key = $xkey;
+
+                return true;
+            }
+
+            return false;
+        };
+
+        $key = 0;
+        if ($browser == 'Iceweasel') {
+            $browser = 'Firefox';
+        }
+        elseif ($find('Playstation Vita', $key)) {
+            $platform = 'PlayStation Vita';
+            $browser = 'Browser';
+        }
+        elseif ($find('Kindle Fire Build', $key) || $find('Silk', $key)) {
+            $browser = $result['browser'][$key] == 'Silk' ? 'Silk' : 'Kindle';
+            $platform = 'Kindle Fire';
+            if (!($version = $result['version'][$key]) || !is_numeric($version[0])) {
+                $version = $result['version'][array_search('Version', $result['browser'])];
+            }
+        }
+        elseif ($find('NintendoBrowser', $key) || $platform == 'Nintendo 3DS') {
+            $browser = 'NintendoBrowser';
+            $version = $result['version'][$key];
+        }
+        elseif ($find('Kindle', $key)) {
+            $browser = $result['browser'][$key];
+            $platform = 'Kindle';
+            $version = $result['version'][$key];
+        }
+        elseif ($find('OPR', $key)) {
+            $browser = 'Opera Next';
+            $version = $result['version'][$key];
+        }
+        elseif ($find('Opera', $key)) {
+            $browser = 'Opera';
+            $find('Version', $key);
+            $version = $result['version'][$key];
+        }
+        elseif ($find('Midori', $key)) {
+            $browser = 'Midori';
+            $version = $result['version'][$key];
+        }
+        elseif ($find('Chrome', $key)) {
+            $browser = 'Chrome';
+            $version = $result['version'][$key];
+        }
+        elseif ($browser == 'AppleWebKit') {
+            if (($platform == 'Android' && !($key = 0))) {
+                $browser = 'Android Browser';
+            }
+            elseif (strpos($platform, 'BB') === 0) {
+                $browser = 'BlackBerry Browser';
+                $platform = 'BlackBerry';
+            }
+            elseif ($platform == 'BlackBerry' || $platform == 'PlayBook') {
+                $browser = 'BlackBerry Browser';
+            }
+            elseif ($find('Safari', $key)) {
+                $browser = 'Safari';
+            }
+
+            $find('Version', $key);
+
+            $version = $result['version'][$key];
+        }
+        elseif ($browser == 'MSIE' || strpos($browser, 'Trident') !== false) {
+            if ($find('IEMobile', $key)) {
+                $browser = 'IEMobile';
+            }
+            else {
+                $browser = 'MSIE';
+                $key = 0;
+            }
+            $version = $result['version'][$key];
+        }
+        elseif ($key = preg_grep('/playstation \d/i', array_map('strtolower', $result['browser']))) {
+            $key = reset($key);
+
+            $platform = 'PlayStation ' . preg_replace('/[^\d]/i', '', $key);
+            $browser = 'NetFront';
+        }
+
+        return array(
+            'platform' => $platform,
+            'browser'  => $browser,
+            'version'  => $version
+        );
+    }
+
+    /**
+     * Give the time difference between two dates, or "now" if only one date provided.
+     *
+     *  @param $oldDate DateTime
+     *  @param $depth int
+     *  @param $now DateTime
+     *
+     *  @return string
+     */
+    public static function timeAgo(\DateTime $oldDate, $depth = 2, \DateTime $now = NULL)
+    {
+        try {
+            if ($now == NULL) {
+                $now = new \DateTime("now");
+            }
+
+            if (!is_int($depth) || $depth < 1 || $depth > 6) {
+                throw new \InvalidArgumentException("Time Ago depth cannot be an integer between 1 and 6");
+            }
+
+            if ($oldDate > $now) {
+                throw new \InvalidArgumentException('The comparative date cannot be greater than now.');
+            }
+
+            $difference = $now->diff($oldDate);
+
+            $intervals = array(
+                'y' => 'year',
+                'm' => 'month',
+                'd' => 'day',
+                'h' => 'hour',
+                'i' => 'min',
+                's' => 'sec'
+            );
+
+            $i = 0;
+            $timeAgo = '';
+
+            foreach ($intervals as $interval => $name) {
+
+                if ($difference->$interval > 1) {
+                    $timeAgo .= sprintf('%s %ss ', $difference->$interval, $intervals[$interval]);
+                    $i++;
+                }
+                elseif ($difference->$interval == 1) {
+                    $timeAgo .= sprintf('%s %s ', $difference->$interval, $intervals[$interval]);
+                    $i++;
+                }
+
+                if ($i == $depth) {
+                    break;
+                }
+            }
+
+            return sprintf('%s ago', $timeAgo);
+        }
+        catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+
 }
