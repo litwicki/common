@@ -668,4 +668,140 @@ class Common
         }
     }
 
+    /**
+     * Convert an object to a json object.
+     *
+     * @param $object
+     *
+     * @throws \Exception
+     */
+    public function objectToJson($object)
+    {
+
+        try {
+
+            $data = $this->objectToArray($object);
+
+            $json = json_encode($data);
+
+            return $json;
+
+        }
+        catch(\Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
+     * @param $object
+     *
+     * @throws \Exception
+     */
+    public function objectToXml($object)
+    {
+        try {
+
+            $data = $this->objectToArray($object);
+
+            $root = $object->getXmlRootName();
+
+            $xml = new \SimpleXMLElement($root);
+
+            array_walk_recursive($data, array ($xml, 'addChild'));
+            return $xml->asXml();
+
+        }
+        catch(\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Convert an object to an associative array.
+     *
+     * @param $object
+     *
+     * @throws \Exception
+     */
+    public function objectToArray($object)
+    {
+        try {
+
+            $obj = new \ReflectionClass($object);
+
+            $properties = $obj->getProperties(\ReflectionProperty::IS_PROTECTED);
+
+            $data = array();
+            $item = array();
+
+            foreach($properties as $property) {
+
+                $field = $property->name;
+
+                $getter = ucwords($field);
+                $getter = str_replace('_','',$getter);
+                $getter = sprintf('get%s', $getter);
+
+                if(method_exists($object, $getter)) {
+
+                    $value = $object->$getter();
+
+                    /**
+                     * If we've fetched an object, recursively convert it as well
+                     * otherwise simply assign the value fetched.
+                     */
+
+                    if(is_object($value)) {
+                        $data[$field] = $this->objectToArray($value);
+                    }
+                    elseif(!is_null($object->$getter())) {
+                        $data[$field] = $value;
+                    }
+
+                }
+
+            }
+
+            $class = new \ReflectionClass($object);
+
+            $objectName = $this->decamelize($class->getShortName());
+
+            $item = array(
+                $objectName => $data
+            );
+
+            return $item;
+
+        }
+        catch(\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $string
+     *
+     * @throws \Exception
+     */
+    public function stringToArray($string)
+    {
+        try {
+
+            if($this->format == 'json') {
+                $array = json_decode($string, true);
+            }
+            else {
+                $json = json_encode($string);
+                $array = json_decode($json, true);
+            }
+
+            return $array;
+
+        }
+        catch(\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
