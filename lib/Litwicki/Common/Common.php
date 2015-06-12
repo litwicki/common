@@ -12,18 +12,36 @@ namespace Litwicki\Common;
 class Common
 {
 
-    public static function getYearSelectChoices()
+    /**
+     * Create an array of "choices" that are years
+     * Typically used for Forms.
+     *
+     * @param int $count
+     * Number of years to go forward.
+     *
+     * @returns $choices array
+     */
+    public static function getYearSelectChoices($count = 5)
     {
         $year = date('Y', time());
 
         $choices = array();
-        for ($i = $year; $i < $year + 5; $i++) {
+        for ($i = $year; $i < $year + $count; $i++) {
             $choices[$i] = $i;
         }
 
         return $choices;
     }
 
+    /**
+     * Create an array of "choices" that are Countries
+     * Typically used for Forms.
+     *
+     * @param bool $usOnly
+     * Whether to simply display United States or ALL countries.
+     *
+     * @returns $choices array
+     */
     public static function getCountrySelectChoices($usOnly = true)
     {
         if ($usOnly) {
@@ -273,6 +291,12 @@ class Common
         );
     }
 
+    /**
+     * Create an array of "choices" that are states
+     * Typically used for Forms.
+     *
+     * @returns $choices array
+     */
     public static function getStateSelectChoices()
     {
         return array(
@@ -337,6 +361,12 @@ class Common
         );
     }
 
+    /**
+     * Create an array of "choices" that are Canadian Provinces
+     * Typically used for Forms.
+     *
+     * @returns $choices array
+     */
     public static function getCanadianProvinceSelectChoices()
     {
         return array(
@@ -356,6 +386,12 @@ class Common
         );
     }
 
+    /**
+     * Create an array of "choices" that are Australian States
+     * Typically used for Forms.
+     *
+     * @returns $choices array
+     */
     public static function getAustralianStateSelectChoices()
     {
         return array(
@@ -371,6 +407,12 @@ class Common
         );
     }
 
+    /**
+     * Create an array of "choices" that are Months
+     * Typically used for Forms.
+     *
+     * @returns $choices array
+     */
     public static function getMonthSelectChoices()
     {
         return array(
@@ -389,6 +431,12 @@ class Common
         );
     }
 
+    /**
+     * Create an array of "choices" that are Timezones
+     * Typically used for Forms.
+     *
+     * @returns $choices array
+     */
     public static function getTimezoneOptions()
     {
 
