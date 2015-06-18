@@ -852,4 +852,40 @@ class Common
         }
     }
 
+    /**
+     * Parse a FormIterator Symfony form for error messages as strings
+     * into an array we can properly format or do whatever we want with.
+     *
+     * @credit: http://stackoverflow.com/a/15693527/4620798
+     *
+     * @param $form \Symfony\Component\Form
+     *
+     * @returns $array array of strings
+     */
+    public static function getFormErrorMessages(\Symfony\Component\Form $form)
+    {
+        $errors = array();
+
+        if ($form->count() > 0) {
+            foreach ($form->all() as $child) {
+                /**
+                 * @var \Symfony\Component\Form\Form $child
+                 */
+                if (!$child->isValid()) {
+                    $errors[$child->getName()] = $this->getErrorMessages($child);
+                }
+            }
+        }
+        else {
+            /**
+             * @var \Symfony\Component\Form\FormError $error
+             */
+            foreach ($form->getErrors() as $key => $error) {
+                $errors[] = $error->getMessage();
+            }
+        }
+
+        return $array;
+    }
+
 }
