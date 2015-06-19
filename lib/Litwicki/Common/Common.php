@@ -885,7 +885,7 @@ class Common
             }
         }
 
-        return $array;
+        return $errors;
     }
 
 }
