@@ -858,11 +858,11 @@ class Common
      *
      * @credit: http://stackoverflow.com/a/15693527/4620798
      *
-     * @param $form \Symfony\Component\Form
+     * @param $form \Symfony\Component\Form\Form
      *
-     * @returns $array array of strings
+     * @returns array $errors - array of strings
      */
-    public static function getFormErrorMessages(\Symfony\Component\Form $form)
+    public static function getFormErrorMessages(\Symfony\Component\Form\Form $form)
     {
         $errors = array();
 
@@ -872,7 +872,7 @@ class Common
                  * @var \Symfony\Component\Form\Form $child
                  */
                 if (!$child->isValid()) {
-                    $errors[$child->getName()] = $this->getErrorMessages($child);
+                    $errors[$child->getName()] = $form->getErrorMessages($child);
                 }
             }
         }
