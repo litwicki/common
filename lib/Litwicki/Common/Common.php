@@ -853,39 +853,24 @@ class Common
     }
 
     /**
-     * Parse a FormIterator Symfony form for error messages as strings
-     * into an array we can properly format or do whatever we want with.
+     * @param $string
+     * @param null $id
      *
-     * @credit: http://stackoverflow.com/a/15693527/4620798
-     *
-     * @param $form \Symfony\Component\Form\Form
-     *
-     * @returns array $errors - array of strings
+     * @throws \Exception
      */
-    public static function getFormErrorMessages(\Symfony\Component\Form\Form $form)
+    public static function createUrlSlug($string, $id = null)
     {
-        $errors = array();
-
-        if ($form->count() > 0) {
-            foreach ($form->all() as $child) {
-                /**
-                 * @var \Symfony\Component\Form\Form $child
-                 */
-                if (!$child->isValid()) {
-                    $errors[$child->getName()] = $form->getErrorMessages($child);
-                }
-            }
+        try {
+            $slug = utf8_encode($string);
+            $slug = str_replace(' ', '-', $slug);
+            $slug = strtolower($slug);
+            $slug = preg_replace('/[^\da-z]/i', '', $slug);
+            $slug = sprintf('%s-%s', $id, $slug);
+            return urlencode($slug);
         }
-        else {
-            /**
-             * @var \Symfony\Component\Form\FormError $error
-             */
-            foreach ($form->getErrors() as $key => $error) {
-                $errors[] = $error->getMessage();
-            }
+        catch(\Exception $e) {
+            throw $e;
         }
-
-        return $errors;
     }
 
 }
