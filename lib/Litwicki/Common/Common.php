@@ -297,22 +297,17 @@ class Common
      *
      * @returns $choices array
      */
-    public static function getStateSelectChoices()
+    public static function getStateSelectChoices($include_other = false)
     {
-        return array(
+        $continental = array(
             'AL' => 'Alabama',
             'AK' => 'Alaska',
-            'AS' => 'American Samoa',
             'AZ' => 'Arizona',
             'AR' => 'Arkansas',
-            'AE' => 'Armed Forces - Europe',
-            'AP' => 'Armed Forces - Pacific',
-            'AA' => 'Armed Forces - USA/Canada',
             'CA' => 'California',
             'CO' => 'Colorado',
             'CT' => 'Connecticut',
             'DE' => 'Delaware',
-            'DC' => 'District of Columbia',
             'FL' => 'Florida',
             'GA' => 'Georgia',
             'GU' => 'Guam',
@@ -344,7 +339,6 @@ class Common
             'OK' => 'Oklahoma',
             'OR' => 'Oregon',
             'PA' => 'Pennsylvania',
-            'PR' => 'Puerto Rico',
             'RI' => 'Rhode Island',
             'SC' => 'South Carolina',
             'SD' => 'South Dakota',
@@ -359,6 +353,18 @@ class Common
             'WI' => 'Wisconsin',
             'WY' => 'Wyoming'
         );
+
+        $other = array(
+          'AS' => 'American Samoa',
+          'AE' => 'Armed Forces - Europe',
+          'AP' => 'Armed Forces - Pacific',
+          'AA' => 'Armed Forces - USA/Canada',
+          'DC' => 'District of Columbia',
+          'PR' => 'Puerto Rico',
+        );
+
+        return ($include_other) ? array_merge($continental, $other) : $continental;
+
     }
 
     /**
