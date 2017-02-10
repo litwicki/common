@@ -18,12 +18,7 @@ A set of helper functions and utilities with a wide variety of use.
 
 Build an array of states, keyed by abbreviation:
 
-    $ use Litwicki\Common\Common;
-    $ $states = Common::getStateOptions();
-    $ //$states['IL'] = 'Illinois'; //example
+    use Litwicki\Common\Common;
+    $states = Common::getStateOptions();
     
-Build a cURL object..
-
-    $ use Litwicki\Common\cURL;
-    $ $curl = new cURL();
-    $ $response = $curl->get('http://example.com");
+    //$states['IL'] = 'Illinois'; //example
