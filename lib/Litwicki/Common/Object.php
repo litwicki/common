@@ -24,7 +24,7 @@ class Object
 
         try {
 
-            $data = $this->toArray($object);
+            $data = self::toArray($object);
 
             $json = json_encode($data);
 
@@ -46,7 +46,7 @@ class Object
     {
         try {
 
-            $data = $this->toArray($object);
+            $data = self::toArray($object);
 
             $root = $object->getXmlRootName();
 
@@ -97,7 +97,7 @@ class Object
                      */
 
                     if(is_object($value)) {
-                        $data[$field] = $this->toArray($value);
+                        $data[$field] = self::toArray($value);
                     }
                     elseif(!is_null($object->$getter())) {
                         $data[$field] = $value;
@@ -109,7 +109,7 @@ class Object
 
             $class = new \ReflectionClass($object);
 
-            $objectName = $this->decamelize($class->getShortName());
+            $objectName = self::decamelize($class->getShortName());
 
             $item = array(
                 $objectName => $data
